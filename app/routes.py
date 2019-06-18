@@ -73,11 +73,11 @@ def logout():
 
 ## Record New Message
 
-@app.route('/newmessage',methods=['GET','POST'])
-def new_message():
-    if request.method == 'GET':
-        if session['username']:
-            messages = mongo.db.messages
+# @app.route('/newmessage',methods=['GET','POST'])
+# def new_message():
+#     if request.method == 'GET':
+#         if session['username']:
+#             messages = mongo.db.messages
             
-        else:
-            return redirect('/')
+#         else:
+#             return redirect('/')
