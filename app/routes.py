@@ -3,6 +3,7 @@ from app import app
 from flask import render_template, request, redirect, session, url_for
 from bson.objectid import ObjectId
 from flask_pymongo import PyMongo
+from passlib.hash import sha256_crypt
 
 ## secret key for sessions
 app.secret_key = b'HO\xf8\xff+\n\x1e\\~/;}'
@@ -30,3 +31,42 @@ def index():
     users = collection.find({})
     ## return
     return render_template('index.html', users = users)
+    
+##User Signup
+
+@app.route('/register',methods=['POST','GET'])
+def register():
+    if request.method == 'POST':
+        users = mongo.db.users
+        existing_user = users.find_one({'name':request.form['username']})
+        
+        if existing_user is None:
+            users.insert(   {'name':request.form['username'],
+                            'password':sha256_crypt.encrypt(request.form['password'])
+            })
+            session['username'] = request.form['username']
+            
+            return redirect(url_for('index'))
+        
+        return 'That username already exists. Try logging in'
+        
+    return render_template('register.html')
+
+## Log In
+@app.route('/login',methods=['POST'])
+
+def login():
+    users = mongo.db.users
+    login_user = users.find_one({'name':request.form['username']})
+    
+    if login_user:
+        if sha256_crypt.verify(request.form['password'], login_user['password']):
+            session['username'] = request.form['username']
+            return redirect(url_for('index'))
+    
+    return 'Invalid username/password combination'
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/') 

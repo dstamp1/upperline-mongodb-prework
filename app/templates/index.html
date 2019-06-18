@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %} Home Page {% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+{{super()}}
+{% if not session['username'] %}
+<h1>Log In</h1>
+      <div class='Login' >
+        
+        <form autocomplete="off" method="POST" action="/login">
+
+            <label for="username">Username:</label>
+            <input type="text" name="username" value=""/>            
+            
+            <label for="password">Password:</label>
+            <input type="password" name="password" value=""/>
+            
+            
+            <input type="submit" value="Submit"/>
+        </form>
+        <p>No account? <a href="/register">Sign up here</a></p>
+      </div>
+{% endif %}
+
+
+
+{% if session['username'] %}
+<h4><a href='/logout'>Logout</a></h4>
+{% endif %}
+
+{% endblock %}
