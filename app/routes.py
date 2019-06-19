@@ -75,27 +75,28 @@ def logout():
 
 ## Record New Message
 
-@app.route('/newmessage',methods=['GET','POST'])
+@app.route('/newmessage',methods=['POST'])
 def new_message():
     if request.method == 'POST':
+        print(request.form)
         if session['username']:
             messages = mongo.db.messages
             messages.insert({   'sender':session['username'],
-                                'recipient':request.form['recipient'],
-                                'message':request.form['message']
+                                'recipient':request.form.get('recipient'),
+                                'message':request.form.get('message')
                                 })
-        return redirect(url_for('index'))
+        return redirect(url_for('yourmessages'))
     else:
       return redirect('/')
 
-@app.route('/yourmessages')
-def display_messages():
+@app.route('/yourmessages', methods=['GET'])
+def yourmessages():
     if session['username']:
         messages = mongo.db.messages
         inbox = messages.find({'recipient':session['username']}) 
         outbox = messages.find({'sender':session['username']})
         
         users = mongo.db.users
-        useres = users.find({})
+        users = users.find({})
 
         return render_template('yourmessages.html', inbox=inbox, outbox=outbox, users=users)
