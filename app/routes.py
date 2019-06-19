@@ -10,10 +10,12 @@ app.secret_key = b'HO\xf8\xff+\n\x1e\\~/;}'
 
 
 # # name of database
-app.config['MONGO_DBNAME'] = 'upperline-prework' 
+app.config['MONGO_DBNAME'] = 'database' 
 
 # # URI of database
 app.config['MONGO_URI'] = 'mongodb+srv://admin:l2UwFnHShONYpVLE@cluster0-qjkuk.mongodb.net/database?retryWrites=true&w=majority' 
+
+
 
 mongo = PyMongo(app)
 
@@ -73,11 +75,27 @@ def logout():
 
 ## Record New Message
 
-# @app.route('/newmessage',methods=['GET','POST'])
-# def new_message():
-#     if request.method == 'GET':
-#         if session['username']:
-#             messages = mongo.db.messages
-            
-#         else:
-#             return redirect('/')
+@app.route('/newmessage',methods=['GET','POST'])
+def new_message():
+    if request.method == 'POST':
+        if session['username']:
+            messages = mongo.db.messages
+            messages.insert({   'sender':session['username'],
+                                'recipient':request.form['recipient'],
+                                'message':request.form['message']
+                                })
+        return redirect(url_for('index'))
+    else:
+      return redirect('/')
+
+@app.route('/yourmessages')
+def display_messages():
+    if session['username']:
+        messages = mongo.db.messages
+        inbox = messages.find({'recipient':session['username']}) 
+        outbox = messages.find({'sender':session['username']})
+        
+        users = mongo.db.users
+        useres = users.find({})
+
+        return render_template('yourmessages.html', inbox=inbox, outbox=outbox, users=users)
