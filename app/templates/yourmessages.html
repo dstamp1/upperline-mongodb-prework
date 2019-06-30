@@ -9,9 +9,10 @@
 {{super()}}
 {% if session['username'] %}
 <div class="container">
+  <h1>{{session['username']}} - Homepage</h1>
   <div class="row">
     <div class="col">
-      <h1>Inbox</h1>
+      <h2>Inbox</h2>
         <div class="inbox">
           <table class="table table-condensed table-hover">
           <tr>
@@ -30,7 +31,7 @@
         </div>
     </div>
     <div class="col">
-      <h1>Outbox</h1>
+      <h2>Outbox</h2>
         <div class="inbox">
           <table class="table table-condensed table-hover">
             <tr>
@@ -49,7 +50,7 @@
         </div>
     </div>
     <div class="col">
-      <h1>Post a Message</h1>
+      <h2>Post a Message</h2>
           <form autocomplete="off" method="POST" action="/newmessage">
               <div class="form-group">
                   <label for="recipient">Message Recipient:</label>
